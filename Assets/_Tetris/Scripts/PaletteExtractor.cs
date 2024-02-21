@@ -9,10 +9,16 @@ public class PaletteExtractor : ScriptableObject
 {
     [SerializeField] private ScriptableObject palette;
 
-    [field:SerializeField] public List<ColorPreset> ColorPresets { get; set; } = new();
+    [SerializeField] private List<ColorPreset> colorPresets = new List<ColorPreset>();
+
+    public List<ColorPreset> ColorPresets
+    {
+        get { return colorPresets; }
+        set { colorPresets = value; }
+    }
 
     [ContextMenu("Read palettes")]
-    private void Fix()
+    private void Import()
     {
         if (palette == null) return;
 
@@ -30,7 +36,8 @@ public class PaletteExtractor : ScriptableObject
             return;
         }
 
-        if (presetsField.GetValue(palette) is not IList presets || presets.Count == 0) return;
+        IList presets = presetsField.GetValue(palette) as IList;
+        if (presets == null || presets.Count == 0) return;
 
         var presetType       = presets[0].GetType();
         var presetColorField = presetType.GetProperty("color", BindingFlags.Instance | BindingFlags.Public);
@@ -53,12 +60,13 @@ public class PaletteExtractor : ScriptableObject
 
     private void OnValidate()
     {
-        Fix();
+        Import();
     }
 
     [Serializable]
     public class ColorPreset
     {
+        [field: Tooltip("Treat this field as read-only. Edit the Palette ScriptableObject referenced above.")]
         [field: SerializeField] public Color Color { get; set; }
         [field: SerializeField] public string Name { get; set; }
 

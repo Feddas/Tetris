@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97202790170d6004488bed59af4360a2, type: 3}
+  m_Name: TetrisPalette
+  m_EditorClassIdentifier: 
+  palette: {fileID: 1, guid: 62bd89425ba4f374bbb738f6f58af1db, type: 2}
+  colorPresets:
+  - <Color>k__BackingField: {r: 0, g: 1, b: 1, a: 1}
+    <Name>k__BackingField: iBlock
+  - <Color>k__BackingField: {r: 1, g: 1, b: 0, a: 1}
+    <Name>k__BackingField: oBlock
+  - <Color>k__BackingField: {r: 1, g: 0, b: 1, a: 1}
+    <Name>k__BackingField: tBlock
+  - <Color>k__BackingField: {r: 0, g: 0, b: 1, a: 1}
+    <Name>k__BackingField: jBlock
+  - <Color>k__BackingField: {r: 1, g: 0.5, b: 0, a: 1}
+    <Name>k__BackingField: lBlock
+  - <Color>k__BackingField: {r: 0, g: 1, b: 0, a: 1}
+    <Name>k__BackingField: sBlock
+  - <Color>k__BackingField: {r: 1, g: 0, b: 0, a: 1}
+    <Name>k__BackingField: zBlock
+  - <Color>k__BackingField: {r: 0.8, g: 0.8, b: 0.8, a: 1}
+    <Name>k__BackingField: ghost
+  - <Color>k__BackingField: {r: 0.2, g: 0.2, b: 0.2, a: 1}
+    <Name>k__BackingField: empty
