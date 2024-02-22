@@ -176,7 +176,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 10
+  orthographic size: 11
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -336,6 +336,7 @@ GameObject:
   - component: {fileID: 1437712551}
   - component: {fileID: 1437712553}
   - component: {fileID: 1437712554}
+  - component: {fileID: 1437712555}
   m_Layer: 0
   m_Name: GameBoard
   m_TagString: Untagged
@@ -401,6 +402,7 @@ MonoBehaviour:
   - tetromino: 6
     tile: {fileID: 11400000, guid: 48358686c977ff448a861ec7abc9e03b, type: 2}
   spawnPosition: {x: -1, y: 8, z: 0}
+  boardSize: {x: 10, y: 20}
 --- !u!114 &1437712554
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -411,6 +413,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 21aae3c50b45da343aebb76669a9517c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1437712555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1437712550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb42c47ff9476474bb8718701e0abd81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1702983437

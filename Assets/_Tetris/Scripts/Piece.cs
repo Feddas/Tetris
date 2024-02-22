@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,5 +21,29 @@ public class Piece : MonoBehaviour
         this.cells = data.shape
             .Select(v => (Vector3Int)v)
             .ToArray();
+    }
+
+    public bool Move(Vector2Int translation)
+    {
+        Vector3Int newPosition = this.position + (Vector3Int)translation;
+
+        bool valid = this.board.IsValidPosition(this, newPosition);
+
+        if (valid)
+        {
+            this.board.Clear(this);
+            this.position = newPosition;
+            this.board.Set(this);
+        }
+
+        return valid;
+    }
+
+    internal void HardDrop()
+    {
+        while (Move(Vector2Int.down))
+        {
+            continue;
+        }
     }
 }
