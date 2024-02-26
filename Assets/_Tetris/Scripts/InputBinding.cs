@@ -36,5 +36,14 @@ public class InputBinding : MonoBehaviour
         {
             piece.HardDrop();
         }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            piece.Rotate(-1);
+        }
+        else if (Input.GetKeyDown(KeyCode.E))
+        {
+            piece.Rotate(1);
+        }
     }
 }
