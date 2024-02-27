@@ -5,10 +5,12 @@ using System.Linq;
 public class Board : MonoBehaviour
 {
     public Tilemap tilemap;
+    public Piece nextPiece { get; private set; }
     public Piece activePiece { get; private set; }
 
     public TetrominoData[] tetrominoes = TetrominoData.All();
 
+    public Vector3Int previewPosition = new Vector3Int(8, 7, 0);
     public Vector3Int spawnPosition = new Vector3Int(-1, 8, 0);
     public int spawnSeed; // I=0, J=1, L=42
     public Vector2Int boardSize = new Vector2Int(10, 20);
@@ -26,16 +28,19 @@ public class Board : MonoBehaviour
     {
         Random.InitState(spawnSeed);
         activePiece = GetComponentInChildren<Piece>();
+        nextPiece = gameObject.AddComponent<Piece>();
+        nextPiece.enabled = false;
+
+        SetNextPiece();
         SpawnPiece();
     }
 
     public void SpawnPiece()
     {
-        int blockIndex = Random.Range(0, this.tetrominoes.Length);
-        TetrominoData data = this.tetrominoes[blockIndex];
+        // Initialize the active piece with the next piece data
+        this.activePiece.Initialize(this, nextPiece.data, spawnPosition);
 
-        this.activePiece.Initialize(this, data, spawnPosition);
-
+        // Only spawn the piece if valid position otherwise game over
         if (IsValidToHave(this.activePiece, at: this.spawnPosition))
         {
             this.activePiece.cells = this.activePiece.proposedCells;
@@ -45,11 +50,33 @@ public class Board : MonoBehaviour
         {
             GameOver();
         }
+
+        // Set the next random piece
+        SetNextPiece();
     }
 
     private void GameOver()
     {
         this.tilemap.ClearAllTiles();
+    }
+
+    private void SetNextPiece()
+    {
+        // Clear the existing piece from the board
+        if (nextPiece.cells != null)
+        {
+            Clear(nextPiece);
+        }
+
+        // Pick a random tetromino to use
+        int blockIndex = Random.Range(0, this.tetrominoes.Length);
+        TetrominoData data = this.tetrominoes[blockIndex];
+
+        // Initialize the next piece with the random data
+        // Draw it at the "preview" position on the board
+        nextPiece.Initialize(this, data, previewPosition);
+        nextPiece.cells = nextPiece.proposedCells; // preview is always valid
+        Set(nextPiece);
     }
 
     public void Set(Piece piece)
