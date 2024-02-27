@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[DefaultExecutionOrder(200)]
 public class InputBinding : MonoBehaviour
 {
     public Piece piece

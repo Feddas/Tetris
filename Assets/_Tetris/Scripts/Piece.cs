@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[DefaultExecutionOrder(100)] // ensure lockTime is incremented before InputBinding's Update
 public class Piece : MonoBehaviour
 {
     public Board board { get; set; }
@@ -14,12 +15,29 @@ public class Piece : MonoBehaviour
     public Vector3Int[] cells { get; set; }
     public Vector3Int[] proposedCells { get; set; }
 
+    public float stepDelay = 1f;
+    public float lockDelay = 0.5f;
+
+    private float stepTime;
+    private float lockTime;
+
+    private void Update()
+    {
+        this.lockTime += Time.deltaTime;
+        if (Time.time >= this.stepTime)
+        {
+            Step();
+        }
+    }
+
     public void Initialize(Board board, TetrominoData data, Vector3Int position)
     {
         this.board = board;
         this.data = data;
         this.position = position;
         this.rotationIndex = 0;
+        this.stepTime = Time.time + this.stepDelay;
+        this.lockTime = 0f;
 
         this.cells = data.shape
             .Select(v => (Vector3Int)v)
@@ -35,6 +53,7 @@ public class Piece : MonoBehaviour
         {
             this.board.Clear(this);
             this.position = newPosition;
+            this.lockTime = 0f;
             this.board.Set(this);
         }
 
@@ -48,12 +67,32 @@ public class Piece : MonoBehaviour
         return this.board.IsValidMove(this, newPosition);
     }
 
+    public void Step()
+    {
+        this.stepTime = Time.time + this.stepDelay;
+        Move(Vector2Int.down);
+
+        if (this.lockTime >= this.lockDelay)
+        {
+            Lock();
+        }
+    }
+
     internal void HardDrop()
     {
         while (Move(Vector2Int.down))
         {
             continue;
         }
+
+        Lock();
+    }
+
+    /// <summary> The piece has finalized placement. It's now locked into position. </summary>
+    private void Lock()
+    {
+        this.board.Set(this);
+        this.board.SpawnPiece();
     }
 
     public bool Rotate(int direction)
@@ -69,6 +108,7 @@ public class Piece : MonoBehaviour
             this.board.Clear(this);
             this.cells = proposedCells;
             this.position = newPosition;
+            this.lockTime = 0f;
             this.board.Set(this);
         }
 
