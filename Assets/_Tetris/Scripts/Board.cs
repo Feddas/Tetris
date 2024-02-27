@@ -35,7 +35,21 @@ public class Board : MonoBehaviour
         TetrominoData data = this.tetrominoes[blockIndex];
 
         this.activePiece.Initialize(this, data, spawnPosition);
-        Set(this.activePiece);
+
+        if (IsValidToHave(this.activePiece, at: this.spawnPosition))
+        {
+            this.activePiece.cells = this.activePiece.proposedCells;
+            Set(this.activePiece);
+        }
+        else
+        {
+            GameOver();
+        }
+    }
+
+    private void GameOver()
+    {
+        this.tilemap.ClearAllTiles();
     }
 
     public void Set(Piece piece)
@@ -56,14 +70,15 @@ public class Board : MonoBehaviour
         }
     }
 
-    public bool IsValidMove(Piece piece, Vector3Int position)
+    /// <returns> true if all proposedCells of <paramref name="piece"/> cover empty cells at position of <paramref name="at"/> </returns>
+    public bool IsValidToHave(Piece piece, Vector3Int at)
     {
         foreach (var cell in piece.proposedCells)
         {
-            Vector3Int tilePosition = cell + position;
+            Vector3Int tilePosition = cell + at;
 
             // is contained in original tetromino position
-            if (piece.cells.Any(c => piece.position + c == tilePosition))
+            if (piece.cells != null && piece.cells.Any(c => piece.position + c == tilePosition))
             {
                 continue;
             }
@@ -82,5 +97,61 @@ public class Board : MonoBehaviour
         }
 
         return true;
+    }
+
+    public void ClearLines()
+    {
+        int row = Bounds.yMin;
+        while (row < Bounds.yMax)
+        {
+            if (IsLineFull(row))
+            {
+                LineClear(row);
+            }
+            else
+            {
+                row++;
+            }
+        }
+    }
+
+    private bool IsLineFull(int row)
+    {
+        for (int col = Bounds.xMin; col < Bounds.xMax; col++)
+        {
+            bool hasTile = this.tilemap.HasTile(new Vector3Int(col, row, 0));
+            if (false == hasTile)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private void LineClear(int row)
+    {
+        // clear row
+        for (int col = Bounds.xMin; col < Bounds.xMax; col++)
+        {
+            Vector3Int position = new Vector3Int(col, row, 0);
+            this.tilemap.SetTile(position, null);
+
+            // TODO: in this column, move all blocks above down. cascade by moving down nonnull tile to last null tile.
+        }
+
+        // move rows above down 1 row
+        while (row < Bounds.yMax)
+        {
+            for (int col = Bounds.xMin; col < Bounds.xMax; col++)
+            {
+                Vector3Int position = new Vector3Int(col, row + 1, 0);
+                TileBase above = this.tilemap.GetTile(position);
+
+                position.y = row;
+                this.tilemap.SetTile(position, above);
+            }
+            row++;
+        }
     }
 }

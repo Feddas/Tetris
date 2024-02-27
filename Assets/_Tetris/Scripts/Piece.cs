@@ -39,7 +39,8 @@ public class Piece : MonoBehaviour
         this.stepTime = Time.time + this.stepDelay;
         this.lockTime = 0f;
 
-        this.cells = data.shape
+        // use proposedCells until the piece is determined to be a valid spawn, then set this.cells.
+        this.proposedCells = data.shape
             .Select(v => (Vector3Int)v)
             .ToArray();
     }
@@ -64,7 +65,7 @@ public class Piece : MonoBehaviour
     public bool MoveProposed(Vector2Int translation, out Vector3Int newPosition)
     {
         newPosition = this.position + (Vector3Int)translation;
-        return this.board.IsValidMove(this, newPosition);
+        return this.board.IsValidToHave(this, at: newPosition);
     }
 
     public void Step()
@@ -92,6 +93,7 @@ public class Piece : MonoBehaviour
     private void Lock()
     {
         this.board.Set(this);
+        this.board.ClearLines();
         this.board.SpawnPiece();
     }
 
