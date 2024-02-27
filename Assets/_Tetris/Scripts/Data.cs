@@ -3,6 +3,7 @@ using UnityEngine;
 
 /// <summary>
 /// Copy / paste from https://github.com/zigurous/unity-tetris-tutorial/blob/main/Assets/Scripts/Data.cs
+/// Which copied it from https://tetris.fandom.com/wiki/SRS
 /// </summary>
 public static class Data
 {

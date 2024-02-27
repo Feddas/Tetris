@@ -56,13 +56,13 @@ public class Board : MonoBehaviour
         }
     }
 
-    public bool IsValidPosition(Piece piece, Vector3Int position)
+    public bool IsValidMove(Piece piece, Vector3Int position)
     {
-        foreach (var cell in piece.cells)
+        foreach (var cell in piece.proposedCells)
         {
             Vector3Int tilePosition = cell + position;
 
-            // is contained in original position
+            // is contained in original tetromino position
             if (piece.cells.Any(c => piece.position + c == tilePosition))
             {
                 continue;
@@ -74,7 +74,7 @@ public class Board : MonoBehaviour
                 return false;
             }
 
-            // collides with already placed tetromino
+            // collides with previously placed and locked tetromino
             if (this.tilemap.HasTile(tilePosition))
             {
                 return false;

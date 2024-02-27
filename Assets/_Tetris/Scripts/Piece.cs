@@ -12,6 +12,7 @@ public class Piece : MonoBehaviour
     public int rotationIndex { get; set; } = 0;
 
     public Vector3Int[] cells { get; set; }
+    public Vector3Int[] proposedCells { get; set; }
 
     public void Initialize(Board board, TetrominoData data, Vector3Int position)
     {
@@ -27,9 +28,8 @@ public class Piece : MonoBehaviour
 
     public bool Move(Vector2Int translation)
     {
-        Vector3Int newPosition = this.position + (Vector3Int)translation;
-
-        bool valid = this.board.IsValidPosition(this, newPosition);
+        this.proposedCells = this.cells; // shape and rotation have NOT changed
+        bool valid = MoveProposed(translation, out Vector3Int newPosition);
 
         if (valid)
         {
@@ -41,6 +41,13 @@ public class Piece : MonoBehaviour
         return valid;
     }
 
+    /// <summary> moves cells already existing in this.proposedCells. </summary>
+    public bool MoveProposed(Vector2Int translation, out Vector3Int newPosition)
+    {
+        newPosition = this.position + (Vector3Int)translation;
+        return this.board.IsValidMove(this, newPosition);
+    }
+
     internal void HardDrop()
     {
         while (Move(Vector2Int.down))
@@ -49,14 +56,23 @@ public class Piece : MonoBehaviour
         }
     }
 
-    public void Rotate(int direction)
+    public bool Rotate(int direction)
     {
         // rotationIndex is not used yet
         this.rotationIndex = Wrap(this.rotationIndex + direction, 0, 4);
 
-        this.board.Clear(this);
         rotateCellsQuaternion(direction);
-        this.board.Set(this);
+        bool valid = isValidRotation(out Vector3Int newPosition);  // is able to rotate piece to a valid position.
+
+        if (valid)
+        {
+            this.board.Clear(this);
+            this.cells = proposedCells;
+            this.position = newPosition;
+            this.board.Set(this);
+        }
+
+        return valid;
     }
 
     private void rotateCells(int direction)
@@ -97,7 +113,7 @@ public class Piece : MonoBehaviour
                 + (cell.y * Data.RotationMatrix[3] * direction)
                 );
 
-            this.cells[i] = new Vector3Int(x, y, 0);
+            this.proposedCells[i] = new Vector3Int(x, y, 0);
         }
     }
 
@@ -126,10 +142,11 @@ public class Piece : MonoBehaviour
         }
 
         // apply rotation
+        this.proposedCells = new Vector3Int[cells.Length];
         for (int i = 0; i < cellsAsFloat.Length; i++)
         {
             var rotatedCell = Quaternion.Euler(0, 0, -90 * direction) * cellsAsFloat[i];
-            this.cells[i] = Scale(rotatedCell, Round);
+            this.proposedCells[i] = Scale(rotatedCell, Round);
         }
     }
 
@@ -137,6 +154,31 @@ public class Piece : MonoBehaviour
     public Vector3Int Scale(Vector3 input, Func<float, int> scalingFunc)
     {
         return new Vector3Int(scalingFunc(input.x), scalingFunc(input.y), scalingFunc(input.z));
+    }
+
+    /// <returns> false if unable to fix rotation causing any tile of the piece to go out of left or right bounds of the board. </returns>
+    private bool isValidRotation(out Vector3Int newPosition)
+    {
+        var xMin = this.proposedCells.Min(c => c.x + position.x);
+        var xMax = this.proposedCells.Max(c => c.x + position.x) + 1;
+        var xMinBounds = this.board.Bounds.xMin;
+        var xMaxBounds = this.board.Bounds.xMax;
+        if (xMin < xMinBounds)
+        {
+            // Debug.LogFormat("min {0},{1}  {2},{3}", xMin, xMax, xMinBounds, xMaxBounds);
+            int howMuch = xMinBounds - xMin;
+            return MoveProposed(Vector2Int.right * howMuch, out newPosition);
+        }
+        else if (xMax > xMaxBounds)
+        {
+            // Debug.LogFormat("max {0},{1}  {2},{3}", xMin, xMax, xMinBounds, xMaxBounds);
+            int howMuch = xMax - xMaxBounds;
+            return MoveProposed(Vector2Int.left * howMuch, out newPosition);
+        }
+
+        // piece never touched the bounds of the game board
+        newPosition = this.position;
+        return true;
     }
 
     /// <summary>
