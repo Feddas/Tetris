@@ -337,6 +337,7 @@ GameObject:
   - component: {fileID: 1437712553}
   - component: {fileID: 1437712554}
   - component: {fileID: 1437712555}
+  - component: {fileID: 1437712556}
   m_Layer: 0
   m_Name: GameBoard
   m_TagString: Untagged
@@ -416,6 +417,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21aae3c50b45da343aebb76669a9517c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stepDelay: 1
+  lockDelay: 0.5
 --- !u!114 &1437712555
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -428,6 +431,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb42c47ff9476474bb8718701e0abd81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1437712556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1437712550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cbe76b1c6b507c4fa13f17f5b043bdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileGhost: {fileID: 11400000, guid: 4d34cb07ab62eb94ba9fcd0a1be757c5, type: 2}
+  board: {fileID: 1437712553}
+  trackingPiece: {fileID: 1437712554}
+  tilemapGhost: {fileID: 877078408}
 --- !u!1 &1702983437
 GameObject:
   m_ObjectHideFlags: 0
@@ -3188,6 +3207,8 @@ Tilemap:
     m_Data: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   - m_RefCount: 52
     m_Data: {r: 0.8, g: 0.8, b: 0.8, a: 1}
+  - m_RefCount: 0
+    m_Data: {r: 0, g: 0, b: 0, a: 0}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
