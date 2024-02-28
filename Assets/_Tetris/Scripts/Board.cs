@@ -70,11 +70,11 @@ public class Board : MonoBehaviour
 
         // Pick a random tetromino to use
         int blockIndex = Random.Range(0, this.tetrominoes.Length);
-        TetrominoData data = this.tetrominoes[blockIndex];
+        TetrominoData piece = this.tetrominoes[blockIndex];
 
         // Initialize the next piece with the random data
         // Draw it at the "preview" position on the board
-        nextPiece.Initialize(this, data, previewPosition);
+        nextPiece.Initialize(this, piece, previewPosition);
         nextPiece.cells = nextPiece.proposedCells; // preview is always valid
         Set(nextPiece);
     }

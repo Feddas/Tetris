@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -13,20 +14,39 @@ public enum Tetromino
     Z,
 }
 
+/// <summary>
+/// Available Tetromino shapes
+/// </summary>
 [System.Serializable]
 public struct TetrominoData
 {
+    [Tooltip("Which tetromino shape this instance represents")]
     public Tetromino tetromino;
+
+    [Tooltip("Tilemap visual used for each cell of this tetromino shape instance")]
     public Tile tile;
 
     /// <summary> Cells that make up the shape of the tetromino. </summary>
     public Vector2Int[] shape { get; private set; }
 
+    // Copy / paste from https://github.com/zigurous/unity-tetris-tutorial/blob/main/Assets/Scripts/Data.cs
+    // Which copied it from https://tetris.fandom.com/wiki/SRS
+    public static readonly Dictionary<Tetromino, Vector2Int[]> Shapes = new Dictionary<Tetromino, Vector2Int[]>()
+    {
+        { Tetromino.I, new Vector2Int[] { new Vector2Int(-1, 1), new Vector2Int( 0, 1), new Vector2Int( 1, 1), new Vector2Int( 2, 1) } },
+        { Tetromino.J, new Vector2Int[] { new Vector2Int(-1, 1), new Vector2Int(-1, 0), new Vector2Int( 0, 0), new Vector2Int( 1, 0) } },
+        { Tetromino.L, new Vector2Int[] { new Vector2Int( 1, 1), new Vector2Int(-1, 0), new Vector2Int( 0, 0), new Vector2Int( 1, 0) } },
+        { Tetromino.O, new Vector2Int[] { new Vector2Int( 0, 1), new Vector2Int( 1, 1), new Vector2Int( 0, 0), new Vector2Int( 1, 0) } },
+        { Tetromino.S, new Vector2Int[] { new Vector2Int( 0, 1), new Vector2Int( 1, 1), new Vector2Int(-1, 0), new Vector2Int( 0, 0) } },
+        { Tetromino.T, new Vector2Int[] { new Vector2Int( 0, 1), new Vector2Int(-1, 0), new Vector2Int( 0, 0), new Vector2Int( 1, 0) } },
+        { Tetromino.Z, new Vector2Int[] { new Vector2Int(-1, 1), new Vector2Int( 0, 1), new Vector2Int( 0, 0), new Vector2Int( 1, 0) } },
+    };
+
     public TetrominoData(Tetromino tetromino)
     {
         this.tetromino = tetromino;
         this.tile = null;
-        this.shape = Data.Cells[tetromino];
+        this.shape = Shapes[tetromino];
     }
 
     public static TetrominoData[] All()

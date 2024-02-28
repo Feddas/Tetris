@@ -338,6 +338,7 @@ GameObject:
   - component: {fileID: 1437712554}
   - component: {fileID: 1437712555}
   - component: {fileID: 1437712556}
+  - component: {fileID: 1437712557}
   m_Layer: 0
   m_Name: GameBoard
   m_TagString: Untagged
@@ -418,8 +419,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21aae3c50b45da343aebb76669a9517c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stepDelay: 1
-  lockDelay: 0.5
 --- !u!114 &1437712555
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -448,6 +447,20 @@ MonoBehaviour:
   board: {fileID: 1437712553}
   trackingPiece: {fileID: 1437712554}
   tilemapGhost: {fileID: 877078408}
+--- !u!114 &1437712557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1437712550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27737d0101192224cad2bc9c49d07d1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stepDelay: 1
+  lockDelay: 0.5
 --- !u!1 &1702983437
 GameObject:
   m_ObjectHideFlags: 0

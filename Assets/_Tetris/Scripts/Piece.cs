@@ -4,45 +4,39 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[DefaultExecutionOrder(100)] // ensure lockTime is incremented before InputBinding's Update
 public class Piece : MonoBehaviour
 {
+    // https://stackoverflow.com/questions/1431359/event-action-vs-event-eventhandler
+    public event Action Initialized;
+    public event Action Moved;
+
     public Board board { get; set; }
     public TetrominoData data { get; set; }
     public Vector3Int position { get; set; }
-    public int rotationIndex { get; set; } = 0;
 
     public Vector3Int[] cells { get; set; }
     public Vector3Int[] proposedCells { get; set; }
-
-    public float stepDelay = 1f;
-    public float lockDelay = 0.5f;
-
-    private float stepTime;
-    private float lockTime;
-
-    private void Update()
-    {
-        this.lockTime += Time.deltaTime;
-        if (Time.time >= this.stepTime)
-        {
-            Step();
-        }
-    }
 
     public void Initialize(Board board, TetrominoData data, Vector3Int position)
     {
         this.board = board;
         this.data = data;
         this.position = position;
-        this.rotationIndex = 0;
-        this.stepTime = Time.time + this.stepDelay;
-        this.lockTime = 0f;
 
         // use proposedCells until the piece is determined to be a valid spawn, then set this.cells.
         this.proposedCells = data.shape
             .Select(v => (Vector3Int)v)
             .ToArray();
+
+        Raise(Initialized);
+    }
+
+    private void Raise(Action eventName)
+    {
+        if (eventName != null)
+        {
+            eventName();
+        }
     }
 
     public bool Move(Vector2Int translation)
@@ -54,8 +48,8 @@ public class Piece : MonoBehaviour
         {
             this.board.Clear(this);
             this.position = newPosition;
-            this.lockTime = 0f;
             this.board.Set(this);
+            Raise(Moved);
         }
 
         return valid;
@@ -66,17 +60,6 @@ public class Piece : MonoBehaviour
     {
         newPosition = this.position + (Vector3Int)translation;
         return this.board.IsValidToHave(this, at: newPosition);
-    }
-
-    public void Step()
-    {
-        this.stepTime = Time.time + this.stepDelay;
-        Move(Vector2Int.down);
-
-        if (this.lockTime >= this.lockDelay)
-        {
-            Lock();
-        }
     }
 
     internal void HardDrop()
@@ -90,7 +73,7 @@ public class Piece : MonoBehaviour
     }
 
     /// <summary> The piece has finalized placement. It's now locked into position. </summary>
-    private void Lock()
+    public void Lock()
     {
         this.board.Set(this);
         this.board.ClearLines();
@@ -99,9 +82,6 @@ public class Piece : MonoBehaviour
 
     public bool Rotate(int direction)
     {
-        // rotationIndex is not used yet
-        this.rotationIndex = Wrap(this.rotationIndex + direction, 0, 4);
-
         rotateCellsQuaternion(direction);
         bool valid = isValidRotation(out Vector3Int newPosition);  // is able to rotate piece to a valid position.
 
@@ -110,53 +90,11 @@ public class Piece : MonoBehaviour
             this.board.Clear(this);
             this.cells = proposedCells;
             this.position = newPosition;
-            this.lockTime = 0f;
             this.board.Set(this);
+            Raise(Moved);
         }
 
         return valid;
-    }
-
-    private void rotateCells(int direction)
-    {
-        for (int i = 0; i < this.cells.Length; i++)
-        {
-            Vector3 cell = this.cells[i];
-            Func<float, int> Round;
-
-            // I & O use an offset pivot
-            switch (this.data.tetromino)
-            {
-                case Tetromino.I:
-                case Tetromino.O:
-                    cell.x -= 0.5f;
-                    cell.y -= 0.5f;
-                    Round = Mathf.CeilToInt;
-                    break;
-                case Tetromino.T:
-                case Tetromino.J:
-                case Tetromino.L:
-                case Tetromino.S:
-                case Tetromino.Z:
-                    Round = Mathf.RoundToInt;
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-
-            // rotate the cell. AKA cell = Round(Quaternion.Euler(0, 0, 90 * direction) * cell);
-            int x, y;
-            x = Round(
-                (cell.x * Data.RotationMatrix[0] * direction)
-                + (cell.y * Data.RotationMatrix[1] * direction)
-                );
-            y = Round(
-                (cell.x * Data.RotationMatrix[2] * direction)
-                + (cell.y * Data.RotationMatrix[3] * direction)
-                );
-
-            this.proposedCells[i] = new Vector3Int(x, y, 0);
-        }
     }
 
     private void rotateCellsQuaternion(int direction)
@@ -188,14 +126,8 @@ public class Piece : MonoBehaviour
         for (int i = 0; i < cellsAsFloat.Length; i++)
         {
             var rotatedCell = Quaternion.Euler(0, 0, -90 * direction) * cellsAsFloat[i];
-            this.proposedCells[i] = Scale(rotatedCell, Round);
+            this.proposedCells[i] = rotatedCell.Scale(Round);
         }
-    }
-
-    /// <summary> Applies the same function to every component of a vector. </summary>
-    public Vector3Int Scale(Vector3 input, Func<float, int> scalingFunc)
-    {
-        return new Vector3Int(scalingFunc(input.x), scalingFunc(input.y), scalingFunc(input.z));
     }
 
     /// <returns> false if unable to fix rotation causing any tile of the piece to go out of left or right bounds of the board. </returns>
@@ -221,17 +153,5 @@ public class Piece : MonoBehaviour
         // piece never touched the bounds of the game board
         newPosition = this.position;
         return true;
-    }
-
-    /// <summary>
-    /// https://stackoverflow.com/questions/14415753/wrap-value-into-range-min-max-without-division
-    /// </summary>
-    /// <returns> the value of <paramref name="input"/> wrapped into the range of <paramref name="x_min"/> and <paramref name="x_max"/>. </returns>
-    private int Wrap(int input, int x_min, int x_max)
-    {
-        if (input < x_min)
-            return x_max - (x_min - input) % (x_max - x_min);
-        else
-            return x_min + (input - x_min) % (x_max - x_min);
     }
 }
