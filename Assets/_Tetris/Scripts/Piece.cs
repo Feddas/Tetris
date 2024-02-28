@@ -29,6 +29,7 @@ public class Piece : MonoBehaviour
         this.position = spawnPosition;
 
         // use proposedCells until the piece is determined to be a valid spawn, then set this.cells.
+        this.cells = null;
         this.proposedCells = data.shape
             .Select(v => (Vector3Int)v)
             .ToArray();

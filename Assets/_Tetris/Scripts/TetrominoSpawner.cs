@@ -44,16 +44,14 @@ public class TetrominoSpawner : MonoBehaviour
         // Initialize the active piece with the next piece data
         this.activePiece.Initialize(board, nextPiece.data);
 
-        // Only spawn the piece if valid position otherwise game over
-        if (board.IsValidToHave(this.activePiece, at: this.activePiece.position))
-        {
-            this.activePiece.cells = this.activePiece.proposedCells;
-            board.Set(this.activePiece);
-        }
-        else
+        // If invalid position call GameOver before spawning the piece for the next round
+        if (false == board.IsValidToHave(this.activePiece, at: this.activePiece.position))
         {
             board.GameOver();
         }
+
+        this.activePiece.cells = this.activePiece.proposedCells;
+        board.Set(this.activePiece);
 
         // Set the next random piece
         SetNextPiece();

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+/// <summary> Visualizer to see where trackingPiece will land after a hard drop. </summary>
 [DefaultExecutionOrder(300)] // ensure Piece.cs is placed before creating this ghost
 public class Ghost : MonoBehaviour
 {
@@ -21,9 +22,12 @@ public class Ghost : MonoBehaviour
     private void Update()
     {
         Clear();
-        Copy();
-        Drop();
-        Set();
+        if (trackingPiece.cells != null)
+        {
+            Copy();
+            Drop();
+            Set();
+        }
     }
 
     private void Clear()
