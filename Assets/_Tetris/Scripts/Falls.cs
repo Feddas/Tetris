@@ -4,6 +4,7 @@ using UnityEngine;
 
 /// <summary> How a tetromino will automatically fall. </summary>
 [RequireComponent(typeof(Piece))]
+[RequireComponent(typeof(Relocates))]
 [DefaultExecutionOrder(100)] // ensure lockTime is incremented before InputBinding's Update
 public class Falls : MonoBehaviour
 {
@@ -20,6 +21,19 @@ public class Falls : MonoBehaviour
     }
     private Piece _piece;
 
+    public Relocates activePiece
+    {
+        get
+        {
+            if (_relocates == null)
+            {
+                _relocates = this.GetComponent<Relocates>();
+            }
+            return _relocates;
+        }
+    }
+    private Relocates _relocates;
+
     public float stepDelay = 1f;
     public float lockDelay = 0.5f;
 
@@ -29,7 +43,7 @@ public class Falls : MonoBehaviour
     void Start()
     {
         piece.Initialized += Piece_Initialized;
-        piece.Moved += Piece_Moved;
+        activePiece.Moved += Piece_Moved;
     }
 
     private void Piece_Moved()
@@ -55,11 +69,11 @@ public class Falls : MonoBehaviour
     public void Step()
     {
         this.stepTime = Time.time + this.stepDelay;
-        piece.Move(Vector2Int.down);
+        activePiece.Move(Vector2Int.down);
 
         if (this.lockTime >= this.lockDelay)
         {
-            piece.Lock();
+            activePiece.Lock();
         }
     }
 }

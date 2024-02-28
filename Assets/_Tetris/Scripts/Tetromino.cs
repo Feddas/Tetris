@@ -15,20 +15,12 @@ public enum Tetromino
 }
 
 /// <summary>
-/// Available Tetromino shapes
+/// static - Available Tetromino shapes
+/// instance - single tetromino shape and tile visual
 /// </summary>
 [System.Serializable]
 public struct TetrominoData
 {
-    [Tooltip("Which tetromino shape this instance represents")]
-    public Tetromino tetromino;
-
-    [Tooltip("Tilemap visual used for each cell of this tetromino shape instance")]
-    public Tile tile;
-
-    /// <summary> Cells that make up the shape of the tetromino. </summary>
-    public Vector2Int[] shape { get; private set; }
-
     // Copy / paste from https://github.com/zigurous/unity-tetris-tutorial/blob/main/Assets/Scripts/Data.cs
     // Which copied it from https://tetris.fandom.com/wiki/SRS
     public static readonly Dictionary<Tetromino, Vector2Int[]> Shapes = new Dictionary<Tetromino, Vector2Int[]>()
@@ -42,18 +34,27 @@ public struct TetrominoData
         { Tetromino.Z, new Vector2Int[] { new Vector2Int(-1, 1), new Vector2Int( 0, 1), new Vector2Int( 0, 0), new Vector2Int( 1, 0) } },
     };
 
-    public TetrominoData(Tetromino tetromino)
-    {
-        this.tetromino = tetromino;
-        this.tile = null;
-        this.shape = Shapes[tetromino];
-    }
-
     public static TetrominoData[] All()
     {
         var enumValues = System.Enum.GetValues(typeof(Tetromino)).Cast<Tetromino>();
         var asData = enumValues.Select(t => new TetrominoData(t)).ToArray();
 
         return asData;
+    }
+
+    [Tooltip("Which tetromino shape this instance represents")]
+    public Tetromino tetromino;
+
+    [Tooltip("Tilemap visual used for each cell of this tetromino shape instance")]
+    public Tile tile;
+
+    /// <summary> Cells that make up the shape of this tetromino instance </summary>
+    public Vector2Int[] cells { get; private set; }
+
+    public TetrominoData(Tetromino tetromino)
+    {
+        this.tetromino = tetromino;
+        this.tile = null;
+        this.cells = Shapes[tetromino];
     }
 }
