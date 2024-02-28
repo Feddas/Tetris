@@ -13,6 +13,8 @@ public class Piece : MonoBehaviour
     [SerializeField]
     private Vector3Int spawnPosition = new Vector3Int(-1, 8, 0); // preview uses 8, 7, 0
 
+    public TetrominoSpawner spawner;
+
     public Board board { get; set; }
     public TetrominoData data { get; set; }
     public Vector3Int position { get; set; }
@@ -80,7 +82,7 @@ public class Piece : MonoBehaviour
     {
         this.board.Set(this);
         this.board.ClearLines();
-        this.board.SpawnPiece();
+        this.spawner.SpawnPiece();
     }
 
     public bool Rotate(int direction)

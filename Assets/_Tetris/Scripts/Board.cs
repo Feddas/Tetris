@@ -2,15 +2,10 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Linq;
 
+/// <summary> Size of the tetris game board and logic for pieces that are no longer interactabled (locked into place). </summary>
 public class Board : MonoBehaviour
 {
     public Tilemap tilemap;
-    public Piece nextPiece;
-    public Piece activePiece;
-
-    public TetrominoData[] tetrominoes = TetrominoData.All();
-
-    public int spawnSeed; // I=0, J=1, L=42
     public Vector2Int boardSize = new Vector2Int(10, 20);
 
     public RectInt Bounds
@@ -22,56 +17,9 @@ public class Board : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        Random.InitState(spawnSeed);
-
-        SetNextPiece();
-        SpawnPiece();
-    }
-
-    public void SpawnPiece()
-    {
-        // Initialize the active piece with the next piece data
-        this.activePiece.Initialize(this, nextPiece.data);
-
-        // Only spawn the piece if valid position otherwise game over
-        if (IsValidToHave(this.activePiece, at: this.activePiece.position))
-        {
-            this.activePiece.cells = this.activePiece.proposedCells;
-            Set(this.activePiece);
-        }
-        else
-        {
-            GameOver();
-        }
-
-        // Set the next random piece
-        SetNextPiece();
-    }
-
-    private void GameOver()
+    public void GameOver()
     {
         this.tilemap.ClearAllTiles();
-    }
-
-    private void SetNextPiece()
-    {
-        // Clear the existing piece from the board
-        if (nextPiece.cells != null)
-        {
-            Clear(nextPiece);
-        }
-
-        // Pick a random tetromino to use
-        int blockIndex = Random.Range(0, this.tetrominoes.Length);
-        TetrominoData piece = this.tetrominoes[blockIndex];
-
-        // Initialize the next piece with the random data
-        // Draw it at the "preview" position on the board
-        nextPiece.Initialize(this, piece);
-        nextPiece.cells = nextPiece.proposedCells; // preview is always valid
-        Set(nextPiece);
     }
 
     public void Set(Piece piece)
@@ -160,6 +108,11 @@ public class Board : MonoBehaviour
             this.tilemap.SetTile(position, null);
 
             // TODO: in this column, move all blocks above down. cascade by moving down nonnull tile to last null tile.
+            //int rowCascade = row;
+            //while (rowCascade < Bounds.yMax)
+            //{
+
+            //}
         }
 
         // move rows above down 1 row
