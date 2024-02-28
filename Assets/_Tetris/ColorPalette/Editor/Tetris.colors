@@ -28,6 +28,8 @@ MonoBehaviour:
   - m_Name: zBlock
     m_Color: {r: 1, g: 0, b: 0, a: 1}
   - m_Name: ghost
-    m_Color: {r: 0.8, g: 0.8, b: 0.8, a: 1}
+    m_Color: {r: 0.4, g: 0.4, b: 0.4, a: 1}
   - m_Name: empty
     m_Color: {r: 0.2, g: 0.2, b: 0.2, a: 1}
+  - m_Name: wall
+    m_Color: {r: 0.8, g: 0.8, b: 0.8, a: 1}

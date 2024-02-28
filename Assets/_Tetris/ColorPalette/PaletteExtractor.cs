@@ -54,6 +54,7 @@ public class PaletteExtractor : ScriptableObject
         {
             var color = (Color)presetColorField.GetValue(preset);
             var name  = (string)presetNameField.GetValue(preset);
+            // Debug.Log($"ColorPreset {name} added");
             ColorPresets.Add(new ColorPreset(color, name));
         }
     }
