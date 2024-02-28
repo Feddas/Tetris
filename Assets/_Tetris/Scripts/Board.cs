@@ -5,13 +5,11 @@ using System.Linq;
 public class Board : MonoBehaviour
 {
     public Tilemap tilemap;
-    public Piece nextPiece { get; private set; }
-    public Piece activePiece { get; private set; }
+    public Piece nextPiece;
+    public Piece activePiece;
 
     public TetrominoData[] tetrominoes = TetrominoData.All();
 
-    public Vector3Int previewPosition = new Vector3Int(8, 7, 0);
-    public Vector3Int spawnPosition = new Vector3Int(-1, 8, 0);
     public int spawnSeed; // I=0, J=1, L=42
     public Vector2Int boardSize = new Vector2Int(10, 20);
 
@@ -27,9 +25,6 @@ public class Board : MonoBehaviour
     private void Start()
     {
         Random.InitState(spawnSeed);
-        activePiece = GetComponentInChildren<Piece>();
-        nextPiece = gameObject.AddComponent<Piece>();
-        nextPiece.enabled = false;
 
         SetNextPiece();
         SpawnPiece();
@@ -38,10 +33,10 @@ public class Board : MonoBehaviour
     public void SpawnPiece()
     {
         // Initialize the active piece with the next piece data
-        this.activePiece.Initialize(this, nextPiece.data, spawnPosition);
+        this.activePiece.Initialize(this, nextPiece.data);
 
         // Only spawn the piece if valid position otherwise game over
-        if (IsValidToHave(this.activePiece, at: this.spawnPosition))
+        if (IsValidToHave(this.activePiece, at: this.activePiece.position))
         {
             this.activePiece.cells = this.activePiece.proposedCells;
             Set(this.activePiece);
@@ -74,7 +69,7 @@ public class Board : MonoBehaviour
 
         // Initialize the next piece with the random data
         // Draw it at the "preview" position on the board
-        nextPiece.Initialize(this, piece, previewPosition);
+        nextPiece.Initialize(this, piece);
         nextPiece.cells = nextPiece.proposedCells; // preview is always valid
         Set(nextPiece);
     }

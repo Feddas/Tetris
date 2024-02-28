@@ -10,6 +10,9 @@ public class Piece : MonoBehaviour
     public event Action Initialized;
     public event Action Moved;
 
+    [SerializeField]
+    private Vector3Int spawnPosition = new Vector3Int(-1, 8, 0); // preview uses 8, 7, 0
+
     public Board board { get; set; }
     public TetrominoData data { get; set; }
     public Vector3Int position { get; set; }
@@ -17,11 +20,11 @@ public class Piece : MonoBehaviour
     public Vector3Int[] cells { get; set; }
     public Vector3Int[] proposedCells { get; set; }
 
-    public void Initialize(Board board, TetrominoData data, Vector3Int position)
+    public void Initialize(Board board, TetrominoData data)
     {
         this.board = board;
         this.data = data;
-        this.position = position;
+        this.position = spawnPosition;
 
         // use proposedCells until the piece is determined to be a valid spawn, then set this.cells.
         this.proposedCells = data.shape
