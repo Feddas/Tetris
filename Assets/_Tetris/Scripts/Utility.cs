@@ -3,6 +3,9 @@ using UnityEngine;
 
 public static class Utility
 {
+    /// <summary> All 3 components of the vector are int.MaxValue. Useful as a default value of a Vector3 to know if that vector3 hasn't been set to anything yet. (zero is more often an expected value than MaxValue). </summary>
+    public static readonly Vector3Int Vector3IntMax = new Vector3Int(int.MaxValue, int.MaxValue, int.MaxValue);
+
     /// <summary> Applies the same function to every component of a vector. </summary>
     public static Vector3Int Scale(this Vector3 input, Func<float, int> scalingFunc)
     {

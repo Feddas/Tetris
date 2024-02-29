@@ -488,6 +488,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tilemap: {fileID: 1702983440}
   boardSize: {x: 10, y: 20}
+  LineclearsCascade: 1
 --- !u!1 &1481884201
 GameObject:
   m_ObjectHideFlags: 0
