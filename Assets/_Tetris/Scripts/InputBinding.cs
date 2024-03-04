@@ -1,9 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary> Controls. How player button inputs affect the active tetromino. </summary>
-[DefaultExecutionOrder(200)] // after pieces have fallen, before ghost is drawn
 [RequireComponent(typeof(Relocates))]
 public class InputBinding : MonoBehaviour
 {
@@ -20,33 +19,36 @@ public class InputBinding : MonoBehaviour
     }
     private Relocates _relocates;
 
-    void Update()
+    public void MoveDown(InputAction.CallbackContext context)
     {
-        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+        perform(context, () => activePiece.Move(Vector2Int.down));
+    }
+
+    public void MoveHorizontal(InputAction.CallbackContext context)
+    {
+        Vector2Int direction = new Vector2Int((int)context.ReadValue<float>(), 0);
+        perform(context, () => activePiece.Move(direction));
+    }
+
+    public void Rotate(InputAction.CallbackContext context)
+    {
+        // 1 = clockwise, -1 = counter-clockwise
+        int direction = (int)context.ReadValue<float>();
+        perform(context, () => activePiece.Rotate(direction));
+    }
+
+    public void HardDrop(InputAction.CallbackContext context)
+    {
+        perform(context, () => activePiece.HardDrop());
+    }
+
+    private void perform(InputAction.CallbackContext context, Action action)
+    {
+        if (context.phase != InputActionPhase.Performed)
         {
-            activePiece.Move(Vector2Int.left);
-        }
-        else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            activePiece.Move(Vector2Int.right);
+            return;
         }
 
-        if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            activePiece.Move(Vector2Int.down);
-        }
-        else if (Input.GetKeyDown(KeyCode.Space))
-        {
-            activePiece.HardDrop();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            activePiece.Rotate(-1);
-        }
-        else if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            activePiece.Rotate(1);
-        }
+        action?.Invoke();
     }
 }
