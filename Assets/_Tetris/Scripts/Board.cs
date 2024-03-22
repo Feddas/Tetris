@@ -82,6 +82,12 @@ public class Board : MonoBehaviour
             if (IsLineFull(row))
             {
                 LineClear(row);
+
+                // clean up new lines from a cascade
+                while (IsLineFull(Bounds.yMin) && LineclearsCascade)
+                {
+                    LineClear(Bounds.yMin);
+                }
             }
             else
             {
@@ -114,7 +120,7 @@ public class Board : MonoBehaviour
 
             if (LineclearsCascade)
             {
-                CascadeColumn(col, row);
+                CascadeColumn(col, Bounds.yMin);
             }
         }
 

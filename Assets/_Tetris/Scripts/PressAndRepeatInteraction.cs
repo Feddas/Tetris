@@ -18,9 +18,16 @@ public class PressAndRepeatInteraction : IInputInteraction
 {
     /// <summary> Make PressAndRepeatInteraction available in the Input Action Asset Editor window
     /// The method is run by [InitializeOnLoad] </summary>
+#if UNITY_EDITOR
     static PressAndRepeatInteraction()
     {
         InputSystem.RegisterInteraction<PressAndRepeatInteraction>();
+#else // register in builds https://forum.unity.com/threads/cannot-build-with-custom-interaction.956580/
+    [UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void OnRuntimeMethodLoad()
+    {
+        InputSystem.RegisterInteraction<PressAndRepeatInteraction>();
+#endif
     }
 
     private static readonly float defaultButtonPressPoint = 0.5f;
