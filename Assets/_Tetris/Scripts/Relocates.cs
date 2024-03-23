@@ -32,6 +32,12 @@ public class Relocates : MonoBehaviour
         }
     }
 
+    /// <summary> returns void to enable being invoked by a UnityEvent </summary>
+    public void MoveVoid(Vector2Int tranlation)
+    {
+        Move(tranlation);
+    }
+
     public bool Move(Vector2Int translation)
     {
         piece.proposedCells = piece.cells; // shape and rotation have NOT changed
@@ -56,6 +62,12 @@ public class Relocates : MonoBehaviour
         }
 
         Lock();
+    }
+
+    /// <summary> returns void to enable being invoked by a UnityEvent </summary>
+    public void RotateVoid(int direction)
+    {
+        Rotate(direction);
     }
 
     public bool Rotate(int direction)
